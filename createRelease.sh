@@ -3,3 +3,5 @@ cp ~/devel/espAutoLoader/esp_timer/build/bootloader/bootloader.bin           ima
 cp ~/devel/espAutoLoader/esp_timer/build/partition_table/partition-table.bin images/partition_table/partition-table.bin 
 
 rsync -azP /home/www-data/web2py/applications/client/ ./client
+rm -rf client/databases/* client/errors/* rm -rf client/sessions/*
+
