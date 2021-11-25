@@ -9,6 +9,7 @@ import json
 import utils
 from datetime import datetime
 import requests
+
 def index():
     #response.flash = T("Hello World")
     config = db().select(db.rn220systems.ALL).first()
@@ -28,8 +29,11 @@ def index():
 
 
 def data():
-    grid = SQLFORM.grid(db.rndata, orderby=~db.rndata.Pointer)
-    return locals()#dict(grid=grid)
+    export_classes = dict(csv=True, json=False, html=False,
+                          tsv=False, xml=False, csv_with_hidden_cols=False,
+                          tsv_with_hidden_cols=False)
+    grid = SQLFORM.grid(db.rndata, orderby=~db.rndata.Pointer, exportclasses=export_classes)
+    return dict(grid=grid)
 
 def testConfig():
     import board
@@ -43,7 +47,8 @@ def testConfig():
         config["serialNo"] = dbConfig.SerialNo
         config["mode"] = dbConfig.devMode
         config["cycle"] = dbConfig.devCycle
-        config["currentRecordPtr"] = 150
+        config["currentRecordPtr"] = -1
+        config["startOfRecordPtr"] = 0
         board.setConfig(config)
     return dict(config=json.dumps(config))
 
@@ -51,37 +56,43 @@ def testConfig():
 def testData():
     import board
     config = board.getConfig()
-    '''currentRecordPtr = config['currentRecordPtr']
+    currentRecordPtr = config['currentRecordPtr']
     #startOfRecordPtr = config['startOfRecordPtr']
     dbData = db().select(db.rndata.ALL).last()
     if dbData:
         startOfRecordPtr = dbData.Pointer
     else:
-        startOfRecordPtr = -1
+        startOfRecordPtr = 0
     ddd = []
-    for i in range(startOfRecordPtr + 1, currentRecordPtr):
-        res = board.readRecord(i)
-        data = {
-            "Pointer"      : i,
-            "SlNo"         : 0,
-            "SerialNo"     : config['serialNo'],
-            "devMode"      : config['mode'],
-            "devCycle"     : config['cycle'],
-            "Datetime"     : datetime.fromtimestamp(res['timestamp']), #"2021-10-12T13:27:52",
-            "Counts"       : res['Counts'],
-            "BGCounts"     : res['BGCounts'],
-            "Concentration": res['Concentration'],
-            "Sigma"        : res['Sigma'],
-            "Temperature"  : res['temperature'],
-            "Humidity"     : res['humidity'],
-            "BattVoltage"  : res['BattVoltage'],
-            "PMTVoltage"   : res['PMTVoltage'],
-            "Pressure"     : res['pressure']
-        }
-        ddd.append(data)
-        db.rndata.insert(**data)
-        db.commit()'''
-    return dict(config) #, dbData=json.dumps(dict(dbData), default=utils.json_serial))
+    if currentRecordPtr > startOfRecordPtr:
+        ddd.append({})
+        noOfRecords = currentRecordPtr - startOfRecordPtr
+        if (noOfRecords > 100):
+            noOfRecords = 100
+        for i in range(startOfRecordPtr + 1, startOfRecordPtr + noOfRecords):
+            res = board.readRecord(i)
+            data = {
+                "Pointer"      : i,
+                "SlNo"         : 0,
+                "SerialNo"     : config['serialNo'],
+                "devMode"      : config['mode'],
+                "devCycle"     : config['cycle'],
+                "Datetime"     : datetime.fromtimestamp(res['timestamp']), #"2021-10-12T13:27:52",
+                "Counts"       : res['Counts'],
+                "BGCounts"     : res['BGCounts'],
+                "Concentration": res['Concentration'],
+                "Sigma"        : res['Sigma'],
+                "Temperature"  : res['temperature'],
+                "Humidity"     : res['humidity'],
+                "BattVoltage"  : res['BattVoltage'],
+                "PMTVoltage"   : res['PMTVoltage'],
+                "Pressure"     : res['pressure']
+            }
+            ddd.append(data)
+            db.rndata.insert(**data)
+            db.commit()
+            board.readRecordAck(i)
+    return dict(config = config, ddd = ddd) #, dbData=json.dumps(dict(dbData), default=utils.json_serial))
 
 
 def pushConfig():

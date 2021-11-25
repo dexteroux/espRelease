@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+*.py.bak
+client/databases/
+client/errors/
+client/sessions/
+
