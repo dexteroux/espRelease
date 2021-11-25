@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 *.py.bak
+*.html.bak
 client/databases/
 client/errors/
 client/sessions/

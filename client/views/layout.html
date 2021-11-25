@@ -35,8 +35,9 @@
   <body>
     <div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
     <!-- Navbar ======================================= -->
-    <nav class="navbar navbar-light navbar-expand-md bg-faded bg-dark navbar-dark justify-content-center">
-       <a href="http://web2py.com" class="navbar-brand d-flex w-50 mr-auto">web2py</a>
+    <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center" style="background-color: #f7f7f7;">
+        <img src="{{=URL('static', 'images', args='BARC.png')}}" width=80>&nbsp;
+        <a class="navbar-brand d-flex w-50 mr-auto">INDRA-SA</a>
        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
          <span class="navbar-toggler-icon"></span>
        </button>
@@ -59,9 +60,9 @@
           {{pass}}
           {{pass}}
         </ul>
-         <form class="form-inline my-2 my-lg-0">
+         <!--form class="form-inline my-2 my-lg-0">
              <input class="form-control mr-sm-2" type="text" placeholder="Search">
-         </form>
+         </form-->
         {{if 'auth' in globals():}}
         <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
           <li class="nav-item dropdown">
@@ -105,10 +106,10 @@
     <footer class="footer container-fluid">
       <div class="row">
         <div class="col-md-12">
-          <div class="copyright pull-left">{{=T('Copyright')}} &#169; {{=request.now.year}}</div>
+          <div class="copyright pull-left">{{=T('Developed by')}} RP&AD, BARC</div>
           <div id="poweredBy" class="pull-right">
             {{=T('Powered by')}}
-            <a href="http://www.web2py.com/">web2py</a>
+            <a href="http://www.ellyptech.com/">Ellyptech</a>
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import utils
 from datetime import datetime
 import requests
 
+@auth.requires_login()
 def index():
     #response.flash = T("Hello World")
     config = db().select(db.rn220systems.ALL).first()
@@ -27,7 +28,7 @@ def index():
         # do nothing
     return dict(form=form)
 
-
+@auth.requires_login()
 def data():
     export_classes = dict(csv=True, json=False, html=False,
                           tsv=False, xml=False, csv_with_hidden_cols=False,

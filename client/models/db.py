@@ -209,5 +209,18 @@ db.define_table('rndata',
                 #primarykey=['Pointer', 'SerialNo', 'Datetime'],
                 migrate=True
                )
+
+
+
+#db.auth_user.truncate()
+#db.commit()
+if not (db(db.auth_user.id>0).select()):
+    db.auth_user.update_or_insert(db.auth_user.email=='indra@barc.gov.in',
+                                  first_name='Indra',
+                                  last_name='User',
+                                  email='indra@barc.gov.in',
+                                  password='pbkdf2(1000,20,sha512)$9efc00dbc65c4a4f$7e46fc0551f344bced53f9b5c4e3896c403011c1')
+    db.commit()
+
 #db.rndata.truncate()
 #db.commit()
