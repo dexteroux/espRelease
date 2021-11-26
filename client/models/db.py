@@ -185,7 +185,6 @@ db.define_table('rn220systems',
                 Field('PumpOntime',       'integer' ),
                 Field('PumpOfftime',      'integer' ),
                 Field('GroupID',          'integer' ),
-                primarykey=['SerialNo'],
                 migrate=True
                )
 
@@ -211,6 +210,7 @@ db.define_table('rndata',
                )
 
 
+import datetime
 
 #db.auth_user.truncate()
 #db.commit()
@@ -222,5 +222,13 @@ if not (db(db.auth_user.id>0).select()):
                                   password='pbkdf2(1000,20,sha512)$9efc00dbc65c4a4f$7e46fc0551f344bced53f9b5c4e3896c403011c1')
     db.commit()
 
+if not (db(db.rn220systems.id>0).select()):
+    db.rn220systems.update_or_insert(db.rn220systems.SerialNo=='1111',
+                                     SerialNo='1111',
+                                     devCycle = 15,
+                                     InstallationDate = datetime.datetime.now(),
+                                     devMode = 'Rn222',
+                                    )
+    db.commit()
 #db.rndata.truncate()
 #db.commit()

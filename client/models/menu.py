@@ -8,6 +8,7 @@
 response.menu = [
     (T('Home'), False, URL('default', 'index'), []),
     (T('Device Data'), False, URL('default', 'data'), []),
+    (T('Reset Device'), False, URL('default', 'resetDevice'), []),
 ]
 
 # ----------------------------------------------------------------------------------------------------------------------

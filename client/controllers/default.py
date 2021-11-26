@@ -36,21 +36,25 @@ def data():
     grid = SQLFORM.grid(db.rndata, orderby=~db.rndata.Pointer, exportclasses=export_classes)
     return dict(grid=grid)
 
-def testConfig():
+@auth.requires_login()
+def resetDevice():
     import board
     config = board.getConfig()
     dbConfig = db().select(db.rn220systems.ALL).first()
-    if (config["serialNo"] == dbConfig.SerialNo and
-            config["mode"] == dbConfig.devMode and
-            config["cycle"] == dbConfig.devCycle):
-        pass
-    else:
-        config["serialNo"] = dbConfig.SerialNo
-        config["mode"] = dbConfig.devMode
-        config["cycle"] = dbConfig.devCycle
-        config["currentRecordPtr"] = -1
-        config["startOfRecordPtr"] = 0
-        board.setConfig(config)
+    #if (config["serialNo"] == dbConfig.SerialNo and
+    #        config["mode"] == dbConfig.devMode and
+    #        config["cycle"] == dbConfig.devCycle):
+    #    pass
+    #else:
+    config["serialNo"] = dbConfig.SerialNo
+    config["mode"] = dbConfig.devMode
+    config["cycle"] = dbConfig.devCycle
+    config["currentRecordPtr"] = -1
+    config["startOfRecordPtr"] = 0
+    board.setConfig(config)
+    db.rndata.truncate()
+    db.commit()
+    redirect(URL('default','index'))
     return dict(config=json.dumps(config))
 
 
