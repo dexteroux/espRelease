@@ -1,0 +1,4 @@
+config = {"author":"Abhishek Bajpai",
+          "version":"0.2",
+          "about":"utility is developed for Radon monitoring network"
+         }
