@@ -36,15 +36,16 @@ apt-get -y install ipython3
 apt-get -y install python3-dev
 apt-get -y install postgresql
 apt-get -y install apache2
-apt-get -y install libapache2-mod-wsgi
+#apt-get -y install libapache2-mod-wsgi-py3
 apt-get -y install python3-psycopg2
 apt-get -y install postfix
 apt-get -y install wget
 apt-get -y install python3-matplotlib
 apt-get -y install python3-reportlab
-apt-get -y install mercurial
+apt-get -y install mercurial vim git wget flex bison gperf python3 python3-pip python3-setuptools cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0 byobu libapache2-mod-wsgi-py3 
 /etc/init.d/postgresql restart
-
+pip3 install pyserial
+sudo gpasswd --add www-data dialout
 # optional, uncomment for emacs
 # apt-get -y install emacs
 

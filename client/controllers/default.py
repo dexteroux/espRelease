@@ -7,6 +7,7 @@
 # ---- example index page ----
 import json
 import utils
+import server
 from datetime import datetime
 import requests
 
@@ -16,6 +17,7 @@ def index():
     config = db().select(db.rn220systems.ALL).first()
     form=SQLFORM(db.rn220systems, config)
     form.vars = db().select(db.rn220systems.ALL).first()
+    form.vars.UpdatedOn = request.now
     form.process(detect_record_change=True)
     if form.record_changed:
         pass
@@ -26,14 +28,14 @@ def index():
     else:
         pass
         # do nothing
-    return dict(form=form)
+    return dict(form=form, vars=form.vars)
 
 @auth.requires_login()
 def data():
-    export_classes = dict(csv=True, json=False, html=False,
-                          tsv=False, xml=False, csv_with_hidden_cols=False,
-                          tsv_with_hidden_cols=False)
-    grid = SQLFORM.grid(db.rndata, orderby=~db.rndata.Pointer, exportclasses=export_classes)
+    #export_classes = dict(csv=True, json=False, html=False,
+    #                      tsv=False, xml=False, csv_with_hidden_cols=False,
+    #                      tsv_with_hidden_cols=False)
+    grid = SQLFORM.grid(db.rndata, orderby=~db.rndata.Pointer) #, exportclasses=export_classes)
     return dict(grid=grid)
 
 @auth.requires_login()
@@ -100,13 +102,30 @@ def testData():
     return dict(config = config, ddd = ddd) #, dbData=json.dumps(dict(dbData), default=utils.json_serial))
 
 
-def pushConfig():
-    config = db().select(db.rn220systems.ALL).first()
-    jsonConfig = dict(config)#, default=utils.json_serial)
-    data = requests.post('https://192.168.29.234/IndraServer/default/pushConfig', json=jsonConfig, verify=False)
-    return dict(data = data.json())
+def syncConfig():
+    return server.serverSyncConfiguration(db)
 
-def syncServer():
+def syncRecord():
+    #for i in range(10):
+    return server.serverSyncRecord(db)
+    #return dict(status = 'success')
+
+'''def syncData():
+    urls = []
+    config = {}
+    for row in db().select(db.serverConfig.ALL):
+        urls.append('{0}/default/syncData'.format(row.url))
+        localConfig = db().select(db.rn220systems.ALL).first()
+        data = []
+        del localConfig['update_record']
+        del localConfig['delete_record']
+        error = ''
+        try:
+            val = requests.post('{0}/default/syncData'.format(row.url), data=json.dumps(dict(localConfig), default=utils.json_serial), verify=False, headers={'Content-Type': 'application/json'})
+            remoteConfig = val.json()
+            data.append(remoteConfig)
+            remoteConfig['UpdatedOn'] = datetime.strptime(remoteConfig['UpdatedOn'], r"%Y-%m-%dT%H:%M:%S")
+            remoteConfig['InstallationDate'] = datetime.strptime(remoteConfig['InstallationDate'], r"%Y-%m-%dT%H:%M:%S")
     config = db().select(db.rn220systems.ALL).first()
     jsonConfig = {'SerialNo': config.SerialNo}
     data = requests.post('https://192.168.29.234/IndraServer/default/getPointer', json=jsonConfig, verify=False)
@@ -118,7 +137,7 @@ def syncServer():
     #    data.pop('update_record', None)
     #    data['Datetime'] = datetime.timestamp(data['Datetime'])
     #    data = requests.post('https://192.168.29.234/IndraServer/default/pushData', json=data, verify=False)
-    return dict(data = data.json())
+    return dict(data = data.json())'''
 
 
 # ---- API (example) -----
