@@ -185,6 +185,7 @@ db.define_table('rn220systems',
                 Field('PumpOntime',       'integer' ),
                 Field('PumpOfftime',      'integer' ),
                 Field('GroupID',          'integer' ),
+                Field('UpdatedOn',        'datetime', default=request.now, update=request.now, readable=False, writable=False),
                 migrate=True
                )
 
@@ -193,15 +194,17 @@ db.define_table('rndata',
                 Field('Pointer',          'integer' ),
                 Field('SlNo',             'integer' ),
                 Field('SerialNo',         'string'  ),
-                Field('devMode',          'string', rname='Mode'),
-                Field('devCycle',         'integer', rname='Cycle'),
-                Field('Datetime',             'datetime', rname='TimeStamp'),
+                Field('devMode',          'string',   rname='Mode'),
+                Field('devCycle',         'integer',  rname='Cycle'),
+                Field('Datetime',         'datetime', rname='TimeStamp'),
                 Field('Counts',           'integer' ),
                 Field('BGCounts',         'integer' ),
                 Field('Concentration',    'integer' ),
                 Field('Sigma',            'double'  ),
                 Field('Temperature',      'double'  ),
                 Field('Humidity',         'double'  ),
+                Field('LoadCurrent',      'double'  ),
+                Field('InputVoltage',     'double'  ),
                 Field('BattVoltage',      'double'  ),
                 Field('PMTVoltage',       'double'  ),
                 Field('Pressure',         'double'  ),
@@ -209,6 +212,10 @@ db.define_table('rndata',
                 migrate=True
                )
 
+db.define_table('serverConfig',
+                Field('url',         'string'  ),
+                migrate=True
+               )
 
 import datetime
 
@@ -228,6 +235,11 @@ if not (db(db.rn220systems.id>0).select()):
                                      devCycle = 15,
                                      InstallationDate = datetime.datetime.now(),
                                      devMode = 'Rn222',
+                                    )
+    db.commit()
+if not (db(db.serverConfig.id>0).select()):
+    db.serverConfig.update_or_insert(db.serverConfig.url=='https://www.ellyptech.com/indra',
+                                     url='https://www.ellyptech.com/indra',
                                     )
     db.commit()
 #db.rndata.truncate()
