@@ -56,7 +56,9 @@ def syncBoard():
                 "Sigma"        : res['Sigma'],
                 "Temperature"  : res['temperature'],
                 "Humidity"     : res['humidity'],
-                "BattVoltage"  : res['BattVoltage'],
+                "LoadCurrent"  : res['loadCurrent'],
+                "InputVoltage" : res['inputVoltage'],
+                "BattVoltage"  : res['battVoltage'],
                 "PMTVoltage"   : res['PMTVoltage'],
                 "Pressure"     : res['pressure']
             }
