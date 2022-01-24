@@ -92,3 +92,37 @@ def serverSyncRecord(db):
             error = ex
         remotePointers.append({'url': row.url, 'remotePointer': remotePointer, 'recordData': recordData, 'resp': resp}) #remotePointer)
     return dict(remotePointers = remotePointers)
+
+
+def serverSyncRecordBunch(db):
+    remotePointers = []
+    urls = []
+    config = {}
+    for row in db().select(db.serverConfig.ALL):
+        remotePointer = 0
+        recordData = {}
+        recordDataArray = []
+        urls.append('{0}/default/syncConfig'.format(row.url))
+        localConfig = db().select(db.rn220systems.ALL).first()
+        data = []
+        del localConfig['update_record']
+        del localConfig['delete_record']
+        resp = []
+        error = ''
+        try:
+            val = requests.post('{0}/default/getLastRecordPointer'.format(row.url), data=json.dumps({'SerialNo': localConfig['SerialNo']}, default=utils.json_serial), verify=False, headers={'Content-Type': 'application/json'})
+            remotePointer = val.json()
+            recordDatas = []
+            for rrow in db(db.rndata.Pointer > remotePointer).select(orderby=db.rndata.Pointer, limitby=(0, 100)):
+                recordData = dict(rrow)
+                recordData.pop('delete_record', None)
+                recordData.pop('update_record', None)
+                recordData['Datetime'] = datetime.timestamp(recordData['Datetime'])
+                recordDatas.append(recordData)
+            recordDataArray.append({'data': recordDatas})
+            val = requests.post('{0}/default/pushRecordBunch'.format(row.url), json={'data': recordDatas}, verify=False)
+            resp.append({'response': val.json()})
+        except Exception as ex:
+            error = ex
+        remotePointers.append({'url': row.url, 'remotePointer': remotePointer, 'recordDataArray': recordDataArray, 'resp': resp}) #remotePointer)
+    return dict(remotePointers = remotePointers)

@@ -106,39 +106,10 @@ def syncConfig():
     return server.serverSyncConfiguration(db)
 
 def syncRecord():
-    #for i in range(10):
     return server.serverSyncRecord(db)
-    #return dict(status = 'success')
 
-'''def syncData():
-    urls = []
-    config = {}
-    for row in db().select(db.serverConfig.ALL):
-        urls.append('{0}/default/syncData'.format(row.url))
-        localConfig = db().select(db.rn220systems.ALL).first()
-        data = []
-        del localConfig['update_record']
-        del localConfig['delete_record']
-        error = ''
-        try:
-            val = requests.post('{0}/default/syncData'.format(row.url), data=json.dumps(dict(localConfig), default=utils.json_serial), verify=False, headers={'Content-Type': 'application/json'})
-            remoteConfig = val.json()
-            data.append(remoteConfig)
-            remoteConfig['UpdatedOn'] = datetime.strptime(remoteConfig['UpdatedOn'], r"%Y-%m-%dT%H:%M:%S")
-            remoteConfig['InstallationDate'] = datetime.strptime(remoteConfig['InstallationDate'], r"%Y-%m-%dT%H:%M:%S")
-    config = db().select(db.rn220systems.ALL).first()
-    jsonConfig = {'SerialNo': config.SerialNo}
-    data = requests.post('https://192.168.29.234/IndraServer/default/getPointer', json=jsonConfig, verify=False)
-    #Pointer = data.json()['Pointer']
-    #jsonData = ""
-    #for row in db(db.rndata.Pointer > Pointer).select(orderby=db.rndata.Pointer, limitby=(0, 2)):
-    #    data = dict(row) # json.loads(json.dumps(dict(row), default=utils.json_serial))
-    #    data.pop('delete_record', None)
-    #    data.pop('update_record', None)
-    #    data['Datetime'] = datetime.timestamp(data['Datetime'])
-    #    data = requests.post('https://192.168.29.234/IndraServer/default/pushData', json=data, verify=False)
-    return dict(data = data.json())'''
-
+def syncRecordBunch():
+    return server.serverSyncRecordBunch(db)
 
 # ---- API (example) -----
 @auth.requires_login()

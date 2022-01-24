@@ -67,22 +67,24 @@ def syncBoard():
             db.commit()
             board.readRecordAck(i)
         pass
+    server.serverSyncConfiguration(db)
+    server.serverSyncRecordBunch(db)
     execEnd = datetime.now()
     return ('syncBoard', (execEnd - execStart).total_seconds())
 
 
-def serverSyncConfig():
+'''def serverSyncConfig():
     execStart = datetime.now()
     server.serverSyncConfiguration(db)
-    for i in range(10):
-        server.serverSyncRecord(db)
+    server.serverSyncRecordBunch(db)
     execEnd = datetime.now()
     return ('serverSyncConfig', (execEnd - execStart).total_seconds())
+'''
 
-
-scheduler = Scheduler(db, tasks=dict(syncBoard=syncBoard, serverSyncConfig=serverSyncConfig))
+scheduler = Scheduler(db, tasks=dict(syncBoard=syncBoard)) #, serverSyncConfig=serverSyncConfig))
 
 if not scheduler.task_status(db.scheduler_task.task_name == 'syncBoard', output=True):
-    scheduler.queue_task('syncBoard', repeats = 0, retry_failed = -1, period=60)
-if not scheduler.task_status(db.scheduler_task.task_name == 'serverSyncConfig', output=True):
-    scheduler.queue_task('serverSyncConfig', repeats = 0, retry_failed = -1, period=60, timeout=300)
+    scheduler.queue_task('syncBoard', repeats = 0, retry_failed = -1, period=300, timeout=300)
+'''if not scheduler.task_status(db.scheduler_task.task_name == 'serverSyncConfig', output=True):
+    scheduler.queue_task('serverSyncConfig', repeats = 0, retry_failed = -1, period=300, timeout=300)
+'''

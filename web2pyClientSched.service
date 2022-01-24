@@ -2,13 +2,14 @@
 Description=Web2Py scheduler service
 After=network-online.target
 Wants=network-online.target systemd-networkd-wait-online.service
-StartLimitIntervalSec=500
+StartLimitIntervalSec=30
 #StartLimitBurst=5
+StartLimitAction=reboot
 
 [Service]
 ExecStart=/usr/bin/python3 /home/www-data/web2py/web2py.py -K client
-Restart=on-failure
-RestartSec=5s
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
