@@ -36,7 +36,8 @@ apt-get -y install ipython3
 apt-get -y install python3-dev
 apt-get -y install postgresql
 apt-get -y install apache2
-#apt-get -y install libapache2-mod-wsgi-py3
+apt-get -y install libapache2-mod-wsgi-py3
+apt-get -y install vim git
 apt-get -y install python3-psycopg2
 apt-get -y install postfix
 apt-get -y install wget

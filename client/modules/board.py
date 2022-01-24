@@ -8,6 +8,18 @@ import json
 from enum import IntEnum
 import time
 from datetime import datetime
+import RPi.GPIO as GPIO
+import time
+import signal
+import traceback
+
+esp_en = 17
+esp_boot = 27
+
+def handler(signum, frame):
+    print("Time out occured ! Need board reset...")
+    raise Exception("end of time")
+
 #from sqlalchemy.orm import sessionmaker
 #import sqlalchemy as db
 #from sqlalchemy.ext.automap import automap_base
@@ -27,13 +39,36 @@ class Commands(IntEnum):
 	SetCurrentRecordPtr = 9
 	GetCurrentRecordPtr = 10
 
+def resetBoard():
+    print("Reseting Board ...")
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(esp_boot, GPIO.OUT)
+    GPIO.output(esp_boot, 0)
+    time.sleep(1)
+    GPIO.output(esp_boot, 1)
+    time.sleep(10)
+    GPIO.cleanup()
+    
 def synctime():
     print("attempting time syncronisation ...")
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(10)
     ser = serial.Serial('/dev/ttyS0', 115200)
-    getTime = {'cmd': Commands.GetTime}
-    ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
-    boardts = json.loads(ser.readline())['timeStamp']
-    ts = time.time()
+    try:
+        getTime = {'cmd': Commands.GetTime}
+        ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
+        boardts = json.loads(ser.readline())['timeStamp']
+        ts = time.time()
+    except Exception as e:
+        #print(traceback.format_exc())
+        #print(e)
+        resetBoard()
+        ser.reset_input_buffer()
+        getTime = {'cmd': Commands.GetTime}
+        ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
+        boardts = json.loads(ser.readline())['timeStamp']
+        ts = time.time()
+        pass
     print(boardts, ts)
     if (boardts - ts)**2 > 2:
         print("time stamp doesn't match ...")
