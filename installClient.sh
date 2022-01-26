@@ -1,6 +1,7 @@
 
+mkdir -p ./distribution/open
 gocryptfs ./distribution/cryptfs ./distribution/open
-pushd ./distribution/open
+cd ./distribution/open
 
 rsync -azP ./client/ /home/www-data/web2py/applications/client
 cp ./routes.py /home/www-data/web2py/
@@ -11,5 +12,5 @@ systemctl enable web2pyClientSched.service
 systemctl restart web2pyClientSched.service
 systemctl restart apache2.service
 
-popd
+cd ../..
 sudo umount ./distribution/open
