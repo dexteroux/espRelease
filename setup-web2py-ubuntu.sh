@@ -26,7 +26,7 @@ read CONFIRM
 echo "installing useful packages"
 echo "=========================="
 apt-get update
-apt-get -y install ssh
+apt-get -y install ssh gocryptfs
 apt-get -y install zip unzip
 apt-get -y install tar
 apt-get -y install openssh-server
@@ -36,7 +36,8 @@ apt-get -y install ipython3
 apt-get -y install python3-dev
 apt-get -y install postgresql
 apt-get -y install apache2
-#apt-get -y install libapache2-mod-wsgi-py3
+apt-get -y install libapache2-mod-wsgi-py3
+apt-get -y install vim git
 apt-get -y install python3-psycopg2
 apt-get -y install postfix
 apt-get -y install wget
