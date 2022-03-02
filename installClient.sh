@@ -8,8 +8,8 @@ mkdir -p /home/pi/src
 rsync -azP ./esp_timer/ /home/pi/src
 cp ./routes.py /home/www-data/web2py/
 cp ./web2pyClientSched.service /etc/systemd/system/web2pyClientSched.service
-cp ./monitor.service /etc/systemd/system/monitor.service
-cp ./monitor.timer /etc/systemd/system/monitor.timer
+cp ./../../monitor.service /etc/systemd/system/monitor.service
+cp ./../../monitor.timer /etc/systemd/system/monitor.timer
 
 chown -R www-data:www-data /home/www-data/web2py/applications/client
 chown -R pi:pi /home/pi/src
