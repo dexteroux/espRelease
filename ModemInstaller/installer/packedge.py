@@ -6,7 +6,7 @@ from subprocess import call
 
 def installPackedges():    
     print('... Installing required system packedges')
-    call(['apt-get', 'install', 'nginx', 'python3-virtualenv', 'locate',
+    call(['apt-get', 'install', 'python3-virtualenv', 'locate',
           'python3-pip', 'ipsec-tools', 'racoon', 'iptables', 'iptables-persistent',
           'uwsgi', 'vim', 'htop', 'uuid-runtime', 'tcpdump', 'wvdial'])
     call(['pip3', 'install', '-U', 'flask', 'flask_sqlalchemy', 'netifaces', 'flask_wtf', 'requests', 'netaddr', 'uwsgi', 'RPi.GPIO'])
