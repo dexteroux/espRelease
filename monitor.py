@@ -1,3 +1,4 @@
+
 import subprocess
 import json
 import requests
@@ -62,7 +63,7 @@ if (dbConfig):
                     "Sigma"        : res['Sigma'],
                     "Temperature"  : res['temperature'],
                     "Humidity"     : res['humidity'],
-                    "LoadCurrent"  : res['loadCurrent'],
+                    "LoadCurrent"  : round(2.55 - res['loadCurrent'], 2),
                     "InputVoltage" : res['inputVoltage'],
                     "BattVoltage"  : res['battVoltage'],
                     "RadonVoltage" : res['radonVoltage'],
@@ -97,8 +98,11 @@ print(response)
 #signal.alarm(40)
 try:
     val = requests.post('{0}/default/monitorAck'.format(url), data=json.dumps(dict(response), default=json_serial), verify=False, headers={'Content-Type': 'application/json'}, timeout=20)
+    print(val.json())
     val = requests.get('{0}/default/syncConfig'.format(url), verify=False, timeout=20)
+    #print(val.json())
     val = requests.get('{0}/default/syncRecordBunch'.format(url), verify=False, timeout=20)
+    #print(val.json())
 except Exception as e:
     print(traceback.format_exc())
     print("####################")
