@@ -63,7 +63,7 @@ if (dbConfig):
                     "Sigma"        : res['Sigma'],
                     "Temperature"  : res['temperature'],
                     "Humidity"     : res['humidity'],
-                    "LoadCurrent"  : round(2.55 - res['loadCurrent'], 2),
+                    "LoadCurrent"  : round(res['loadCurrent'] - 2.5, 2),
                     "InputVoltage" : res['inputVoltage'],
                     "BattVoltage"  : res['battVoltage'],
                     "RadonVoltage" : res['radonVoltage'],
