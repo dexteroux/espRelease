@@ -82,7 +82,8 @@ if (dbConfig):
     PowerOnDuration = dbConfig['PowerOnDuration']
     response['BootMode'] = BootMode
     response['PowerOnDuration'] = 0
-
+    print(dbConfig, config)
+    board.syncConfig(dbConfig, config)
     if BootMode == 'PowerSaveMode':
         response['PowerOnDuration'] = PowerOnDuration
         print(PowerOnDuration)

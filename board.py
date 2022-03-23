@@ -140,13 +140,13 @@ def syncConfig(dbConfig, config):
     #if (config["serialNo"] == dbConfig.SerialNo and
     #        config["mode"] == dbConfig.devMode and
     #        config["cycle"] == dbConfig.devCycle):
-    config["serialNo"] = dbConfig.SerialNo
-    config["mode"]     = dbConfig.devMode
-    config["cycle"]    = dbConfig.devCycle
-    config["ADC0"]     = dbConfig.ADC0
-    config["ADC1"]     = dbConfig.ADC1
-    config["ADC2"]     = dbConfig.ADC2
-    config["ADC3"]     = dbConfig.ADC3
+    config["serialNo"] = dbConfig['SerialNo']
+    config["mode"]     = dbConfig['devMode']
+    config["cycle"]    = dbConfig['devCycle']
+    config["ADC0"]     = dbConfig['ADC0']
+    config["ADC1"]     = dbConfig['ADC1']
+    config["ADC2"]     = dbConfig['ADC2']
+    config["ADC3"]     = dbConfig['ADC3']
     setConfig(config)
     return 0
 
