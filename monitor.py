@@ -35,14 +35,18 @@ try:
 except Exception as e:
     print(traceback.format_exc())
     print("####################")
-
+print(dbConfig)
 if (dbConfig):
     board.synctime()
     config = board.getConfig()
     currentRecordPtr = config['currentRecordPtr']
     try:
+        #print("###################################################1")
+        #print('{0}/default/getRecordPtr'.format(url))
         val = requests.get('{0}/default/getRecordPtr'.format(url), verify=False, timeout=20)
         startOfRecordPtr = val.json()['startOfRecordPtr']
+        #print(startOfRecordPtr, currentRecordPtr)
+        #print("###################################################2")
         if currentRecordPtr > startOfRecordPtr:
             #ddd.append({})
             noOfRecords = currentRecordPtr - startOfRecordPtr
@@ -63,7 +67,7 @@ if (dbConfig):
                     "Sigma"        : res['Sigma'],
                     "Temperature"  : res['temperature'],
                     "Humidity"     : res['humidity'],
-                    "LoadCurrent"  : round(res['loadCurrent'] - 2.5, 2),
+                    "LoadCurrent"  : round(((5.25/2) - res['loadCurrent']) * 5.633, 2),
                     "InputVoltage" : res['inputVoltage'],
                     "BattVoltage"  : res['battVoltage'],
                     "RadonVoltage" : res['radonVoltage'],
@@ -84,22 +88,24 @@ if (dbConfig):
     response['PowerOnDuration'] = 0
     print(dbConfig, config)
     board.syncConfig(dbConfig, config)
-    if BootMode == 'PowerSaveMode':
-        response['PowerOnDuration'] = PowerOnDuration
-        print(PowerOnDuration)
-        if upTimeInMin > PowerOnDuration:
-            print('Rebooting ...')
-            response['actionTaken'] = 'Rebooting'
-        else:
-            print('Not Rebooting yet ...')
-            response['actionTaken'] = 'Not Rebooting'
+    #if BootMode == 'PowerSaveMode':
+    response['PowerOnDuration'] = PowerOnDuration
+    print(PowerOnDuration)
+    if upTimeInMin > PowerOnDuration:
+        print('Rebooting ...')
+        response['actionTaken'] = 'Rebooting'
+    else:
+        print('Not Rebooting yet ...')
+        response['actionTaken'] = 'Not Rebooting'
 print(response)
 
 #signal.signal(signal.SIGALRM, handler)
 #signal.alarm(40)
 try:
     val = requests.post('{0}/default/monitorAck'.format(url), data=json.dumps(dict(response), default=json_serial), verify=False, headers={'Content-Type': 'application/json'}, timeout=20)
-    print(val.json())
+    #print("###################################################0")
+    #print(val)
+    #print(val.json())
     val = requests.get('{0}/default/syncConfig'.format(url), verify=False, timeout=20)
     #print(val.json())
     val = requests.get('{0}/default/syncRecordBunch'.format(url), verify=False, timeout=20)
@@ -111,11 +117,12 @@ except Exception as e:
 finally:
     #signal.alarm(0)
     pass
-print("####################")
+#print("####################")
 
 if response['actionTaken'] == 'Rebooting':
     board.scheduleShutDown()
-    os.system("shutdown -h 5")
+    #os.system("shutdown now")
+    #os.system("shutdown -h 5")
 
 '''lastUpdate = res['lastupdated']
     if (lastUpdate):
