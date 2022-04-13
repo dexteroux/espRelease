@@ -52,6 +52,7 @@ LABEL="end"
     },
     {'file':'/etc/udev/rules.d/40-huawei.rules',
      'data': '''ACTION=="add", ATTRS{idVendor}=="12d1",ATTRS{idProduct}=="1c20",KERNEL=="sr*", GOTO="switch"
+ACTION=="add", ATTRS{idVendor}=="12d1",ATTRS{idProduct}=="1c05",KERNEL=="sr*", GOTO="switch"
 ACTION=="add", ATTRS{idVendor}=="12d1",ATTRS{idProduct}=="14fe", RUN+="usb_modeswitch '/%k'"
 ACTION=="add", ATTRS{idVendor}=="12d1",ATTRS{idProduct}=="1506",KERNEL=="ttyUSB*", SUBSYSTEM=="tty", GOTO="wvdial"
 ACTION=="add", ATTRS{idVendor}=="12d1",ATTRS{idProduct}=="1f01",KERNEL=="sr*", GOTO="connect"

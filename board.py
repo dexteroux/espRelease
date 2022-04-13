@@ -147,6 +147,7 @@ def syncConfig(dbConfig, config):
     config["ADC1"]     = dbConfig['ADC1']
     config["ADC2"]     = dbConfig['ADC2']
     config["ADC3"]     = dbConfig['ADC3']
+    config["totalRecords"]     = dbConfig['RecordQueueSize']
     setConfig(config)
     return 0
 
