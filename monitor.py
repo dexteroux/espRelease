@@ -40,19 +40,23 @@ if (dbConfig):
     board.synctime()
     config = board.getConfig()
     currentRecordPtr = config['currentRecordPtr']
+    startOfRecordPtr = config['startOfRecordPtr']
+    print(config)
+    print(currentRecordPtr)
     try:
-        #print("###################################################1")
-        #print('{0}/default/getRecordPtr'.format(url))
         val = requests.get('{0}/default/getRecordPtr'.format(url), verify=False, timeout=20)
-        startOfRecordPtr = val.json()['startOfRecordPtr']
-        #print(startOfRecordPtr, currentRecordPtr)
-        #print("###################################################2")
-        if currentRecordPtr > startOfRecordPtr:
+        startOfRecordPtr1 = val.json()['startOfRecordPtr']+1
+        if (startOfRecordPtr1 > startOfRecordPtr):
+            startOfRecordPtr = startOfRecordPtr1 
+        print(currentRecordPtr, startOfRecordPtr)
+        if currentRecordPtr >= startOfRecordPtr:
             #ddd.append({})
-            noOfRecords = currentRecordPtr - startOfRecordPtr
+            noOfRecords = currentRecordPtr - startOfRecordPtr + 1
+            print(noOfRecords)
             if (noOfRecords > 100):
                 noOfRecords = 100
-            for i in range(startOfRecordPtr + 1, startOfRecordPtr + noOfRecords):
+            for i in range(startOfRecordPtr, startOfRecordPtr + noOfRecords):
+                print("#########################", i)
                 res = board.readRecord(i)
                 data = {
                     "Pointer"      : i,
@@ -76,7 +80,6 @@ if (dbConfig):
                     }
                 ddd.append(data)
             response['data'] = ddd
-        #                                                                                                                                                              db.rndata.insert(**data)
     except Exception as e:
         print(traceback.format_exc())
         print("####################")
@@ -99,6 +102,7 @@ if (dbConfig):
         response['actionTaken'] = 'Not Rebooting'
 print(response)
 
+
 #signal.signal(signal.SIGALRM, handler)
 #signal.alarm(40)
 try:
@@ -119,10 +123,11 @@ finally:
     pass
 #print("####################")
 
+
 if response['actionTaken'] == 'Rebooting':
     board.scheduleShutDown()
-    #os.system("shutdown now")
-    #os.system("shutdown -h 5")
+    os.system("reboot")
+    pass
 
 '''lastUpdate = res['lastupdated']
     if (lastUpdate):

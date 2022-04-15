@@ -73,8 +73,8 @@ def synctime():
     finally:
         signal.alarm(0)
     print(boardts, ts)
-    if (boardts - ts)**2 > 2:
-        print("time stamp doesn't match ...")
+    if (boardts - ts)**2 > 8:
+        print("time stamp doesn't match ", boardts - ts, "Sec ...")
         print("time sync in progress ...")
         setTime = {'cmd': Commands.SetTime, 'timeStamp': time.time()}
         ser.write(("'''" + json.dumps(setTime) + "'''").encode('utf-8'))
