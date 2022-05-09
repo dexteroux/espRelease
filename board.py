@@ -10,8 +10,11 @@ import time
 from datetime import datetime
 import RPi.GPIO as GPIO
 import time
+import os
 import signal
 import traceback
+
+SERIAL_PORT = "/dev/ttyAMA0"
 
 esp_en = 17
 esp_boot = 27
@@ -54,41 +57,46 @@ def synctime():
     print("attempting time syncronisation ...")
     signal.signal(signal.SIGALRM, handler)
     signal.alarm(10)
-    ser = serial.Serial('/dev/ttyS0', 115200)
-    try:
-        getTime = {'cmd': Commands.GetTime}
-        ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
-        boardts = json.loads(ser.readline())['timeStamp']
-        ts = time.time()
-    except Exception as e:
-        #print(traceback.format_exc())
-        #print(e)
-        resetBoard()
-        ser.reset_input_buffer()
-        getTime = {'cmd': Commands.GetTime}
-        ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
-        boardts = json.loads(ser.readline())['timeStamp']
-        ts = time.time()
-        pass
-    finally:
-        signal.alarm(0)
-    print(boardts, ts)
-    if (boardts - ts)**2 > 8:
-        print("time stamp doesn't match ", boardts - ts, "Sec ...")
-        print("time sync in progress ...")
-        setTime = {'cmd': Commands.SetTime, 'timeStamp': time.time()}
-        ser.write(("'''" + json.dumps(setTime) + "'''").encode('utf-8'))
-        if json.loads(ser.readline())['status'] == 1:
-            print("time sync done.")
+    ser = serial.Serial(SERIAL_PORT, 115200)
+    res = os.popen('timedatectl status | grep synchronized').readlines()[0]#(-1)[0].strip()
+    if res != None and "yes" in res:
+        print("System time syncronised!")
+        try:
+            getTime = {'cmd': Commands.GetTime}
+            ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
+            boardts = json.loads(ser.readline())['timeStamp']
+            ts = time.time()
+        except Exception as e:
+            #print(traceback.format_exc())
+            #print(e)
+            resetBoard()
+            ser.reset_input_buffer()
+            getTime = {'cmd': Commands.GetTime}
+            ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
+            boardts = json.loads(ser.readline())['timeStamp']
+            ts = time.time()
+            pass
+        finally:
+            signal.alarm(0)
+        print(boardts, ts)
+        if (boardts - ts)**2 > 8:
+            print("time stamp doesn't match ", boardts - ts, "Sec ...")
+            print("time sync in progress ...")
+            setTime = {'cmd': Commands.SetTime, 'timeStamp': time.time()}
+            ser.write(("'''" + json.dumps(setTime) + "'''").encode('utf-8'))
+            if json.loads(ser.readline())['status'] == 1:
+                print("time sync done.")
+        else:
+            print("board time is in sync")
     else:
-        print("board time is in sync")
+        print("System time not syncronised!")
     ser.close()
     return 0
 
 def getConfig():
     print("fetching configuration ...")
     getConfig = {'cmd': Commands.GetConfig}
-    ser = serial.Serial('/dev/ttyS0', 115200)
+    ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(getConfig) + "'''").encode('utf-8'))
     config = json.loads(ser.readline())
     ser.close()
@@ -99,7 +107,7 @@ def setConfig(config):
     setConfig = {'cmd': Commands.SetConfig,
 				'config': config}
     print(json.dumps(setConfig))
-    ser = serial.Serial('/dev/ttyS0', 115200)
+    ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(setConfig) + "'''").encode('utf-8'))
     res = json.loads(ser.readline())
     print(res)
@@ -111,7 +119,7 @@ def readRecord(recordPointer):
     print("fetching Record ...")
     readRecordStr = {'cmd': Commands.ReadRecord, 'recordPointer': recordPointer}
     #print(json.dumps(readRecordStr))
-    ser = serial.Serial('/dev/ttyS0', 115200)
+    ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(readRecordStr) + "'''").encode('utf-8'))
     #print(recordPointer, ser.readline())
     res = json.loads(ser.readline())
@@ -121,7 +129,7 @@ def readRecord(recordPointer):
 
 def readRecordAck(startOfRecordPtr):
     acknowledge = {'cmd': Commands.ReadAck, 'startOfRecordPtr': startOfRecordPtr}
-    ser = serial.Serial('/dev/ttyS0', 115200)
+    ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(acknowledge) + "'''").encode('utf-8'))
     res = json.loads(ser.readline())
     ser.close()
@@ -129,7 +137,7 @@ def readRecordAck(startOfRecordPtr):
 
 def scheduleShutDown():
     scheduleShutDown = {'cmd': Commands.ScheduleShutDown}
-    ser = serial.Serial('/dev/ttyS0', 115200)
+    ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(scheduleShutDown) + "'''").encode('utf-8'))
     res = json.loads(ser.readline())
     ser.close()

@@ -8,6 +8,9 @@ import board
 from datetime import date, datetime
 import signal
 import traceback
+import jobs
+
+SERIAL_PORT = "/dev/ttyAMA0"
 
 def handler(signum, frame):
     print("Time out occured ...")
@@ -23,7 +26,8 @@ url = 'https://localhost/client'
 lastUpdate = None
 response = {'actionTaken' : 'None'}
 cmd = ['cat', '/proc/uptime']
-
+ip = os.popen('dig TXT +short o-o.myaddr.l.google.com @ns1.google.com').readlines()#(-1)[0].strip()
+print(ip)
 uptime = float(subprocess.check_output(cmd).decode("utf-8").split(' ')[0])
 upTimeInMin = uptime / 60
 print(upTimeInMin)
@@ -38,6 +42,7 @@ except Exception as e:
 print(dbConfig)
 if (dbConfig):
     board.synctime()
+    #exit(0)
     config = board.getConfig()
     currentRecordPtr = config['currentRecordPtr']
     startOfRecordPtr = config['startOfRecordPtr']
@@ -47,7 +52,7 @@ if (dbConfig):
         val = requests.get('{0}/default/getRecordPtr'.format(url), verify=False, timeout=20)
         startOfRecordPtr1 = val.json()['startOfRecordPtr']+1
         if (startOfRecordPtr1 > startOfRecordPtr):
-            startOfRecordPtr = startOfRecordPtr1 
+            startOfRecordPtr = startOfRecordPtr1
         print(currentRecordPtr, startOfRecordPtr)
         if currentRecordPtr >= startOfRecordPtr:
             #ddd.append({})
@@ -123,7 +128,7 @@ finally:
     pass
 #print("####################")
 
-
+jobs.runJobs()
 if response['actionTaken'] == 'Rebooting':
     board.scheduleShutDown()
     os.system("reboot")
