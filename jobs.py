@@ -39,7 +39,13 @@ def runJobs():
     except Exception as e:
         print(traceback.format_exc())
         print("####################")
+    return 0
+
+def backup():
+    subprocess.call(['rsync', '-azP', '/home/www-data/web2py/applications/client', '/home/pi/backup'])
+    return 0
 
 
 if __name__ == "__main__":
     runJobs()
+    backup()

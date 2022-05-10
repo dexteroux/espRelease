@@ -129,6 +129,7 @@ finally:
 #print("####################")
 
 jobs.runJobs()
+jobs.backup()
 if response['actionTaken'] == 'Rebooting':
     board.scheduleShutDown()
     os.system("reboot")
