@@ -14,7 +14,7 @@ import os
 import signal
 import traceback
 
-SERIAL_PORT = "/dev/ttyAMA0"
+SERIAL_PORT = "/dev/ttyS0"
 
 esp_en = 17
 esp_boot = 27
