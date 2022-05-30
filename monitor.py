@@ -10,8 +10,6 @@ import signal
 import traceback
 import jobs
 
-SERIAL_PORT = "/dev/ttyAMA0"
-
 def handler(signum, frame):
     print("Time out occured ...")
     raise Exception("end of time")
@@ -35,6 +33,7 @@ ddd = []
 response['upTimeInMin'] = upTimeInMin
 try:
     val = requests.get('{0}/default/monitor'.format(url), verify=False, timeout=20)
+    print(val)
     dbConfig = val.json()
 except Exception as e:
     print(traceback.format_exc())
@@ -54,6 +53,7 @@ if (dbConfig):
         if (startOfRecordPtr1 > startOfRecordPtr):
             startOfRecordPtr = startOfRecordPtr1
         print(currentRecordPtr, startOfRecordPtr)
+        #startOfRecordPtr = startOfRecordPtr1
         if currentRecordPtr >= startOfRecordPtr:
             #ddd.append({})
             noOfRecords = currentRecordPtr - startOfRecordPtr + 1
@@ -129,7 +129,7 @@ finally:
 #print("####################")
 
 jobs.runJobs()
-jobs.backup()
+#jobs.backup()
 if response['actionTaken'] == 'Rebooting':
     board.scheduleShutDown()
     os.system("reboot")
