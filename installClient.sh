@@ -10,6 +10,8 @@ cp ./routes.py /home/www-data/web2py/
 cp ./web2pyClientSched.service /etc/systemd/system/web2pyClientSched.service
 cp ./../../monitor.service /etc/systemd/system/monitor.service
 cp ./../../monitor.timer /etc/systemd/system/monitor.timer
+cp ./../../restart.service /etc/systemd/system/monitor.service
+cp ./../../restart.timer /etc/systemd/system/monitor.timer
 
 chown -R www-data:www-data /home/www-data/web2py/applications/client
 chown -R pi:pi /home/pi/src
@@ -18,6 +20,8 @@ systemctl restart web2pyClientSched.service
 systemctl restart apache2.service
 systemctl enable  monitor.timer
 systemctl restart monitor.timer
+systemctl enable  restart.timer
+systemctl restart restart.timer
 
 popd
 umount ./distribution/open
