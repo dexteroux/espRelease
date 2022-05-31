@@ -10,8 +10,8 @@ cp ./routes.py /home/www-data/web2py/
 cp ./web2pyClientSched.service /etc/systemd/system/web2pyClientSched.service
 cp ./../../monitor.service /etc/systemd/system/monitor.service
 cp ./../../monitor.timer /etc/systemd/system/monitor.timer
-cp ./../../restart.service /etc/systemd/system/monitor.service
-cp ./../../restart.timer /etc/systemd/system/monitor.timer
+cp ./../../restart.service /etc/systemd/system/restart.service
+cp ./../../restart.timer /etc/systemd/system/restart.timer
 
 chown -R www-data:www-data /home/www-data/web2py/applications/client
 chown -R pi:pi /home/pi/src
