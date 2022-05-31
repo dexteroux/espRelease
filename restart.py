@@ -19,7 +19,7 @@ cmd = ['cat', '/proc/uptime']
 uptime = float(subprocess.check_output(cmd).decode("utf-8").split(' ')[0])
 upTimeInMin = uptime / 60
 print(upTimeInMin)
-if upTimeInMin > 300:
+if upTimeInMin > 200:
     print('Rebooting ...')
     board.synctime()
     board.scheduleShutDown()
