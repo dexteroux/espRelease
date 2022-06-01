@@ -21,6 +21,8 @@ upTimeInMin = uptime / 60
 print(upTimeInMin)
 if upTimeInMin > 200:
     print('Rebooting ...')
+    os.system("systemctl stop monitor.timer")
+    os.system("systemctl stop monitor")
     board.synctime()
     board.scheduleShutDown()
     os.system("reboot")
