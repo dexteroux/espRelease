@@ -43,8 +43,9 @@ if (dbConfig):
     board.synctime()
     #exit(0)
     config = board.getConfig()
+    print("*********************************")
     currentRecordPtr = config['currentRecordPtr']
-    startOfRecordPtr = config['startOfRecordPtr']
+    startOfRecordPtr = config['startOfRecordPtr'] + 1
     print(config)
     print(currentRecordPtr)
     try:
@@ -53,6 +54,10 @@ if (dbConfig):
         if (startOfRecordPtr1 > startOfRecordPtr):
             startOfRecordPtr = startOfRecordPtr1
         print(currentRecordPtr, startOfRecordPtr)
+        print("########################################")
+        pstatus = board.partitionStatus()
+        print(pstatus)
+        response['pstatus'] = pstatus
         #startOfRecordPtr = startOfRecordPtr1
         if currentRecordPtr >= startOfRecordPtr:
             #ddd.append({})
@@ -112,9 +117,9 @@ print(response)
 #signal.alarm(40)
 try:
     val = requests.post('{0}/default/monitorAck'.format(url), data=json.dumps(dict(response), default=json_serial), verify=False, headers={'Content-Type': 'application/json'}, timeout=20)
-    #print("###################################################0")
+    print("###################################################0")
     #print(val)
-    #print(val.json())
+    print(val.text)
     val = requests.get('{0}/default/syncConfig'.format(url), verify=False, timeout=20)
     #print(val.json())
     val = requests.get('{0}/default/syncRecordBunch'.format(url), verify=False, timeout=20)
@@ -132,7 +137,9 @@ jobs.runJobs()
 #jobs.backup()
 if response['actionTaken'] == 'Rebooting':
     board.scheduleShutDown()
-    os.system("reboot")
+    os.system("sync")
+    os.system("shutdown -Fh now")
+    #os.system("reboot")
     pass
 
 '''lastUpdate = res['lastupdated']

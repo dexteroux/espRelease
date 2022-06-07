@@ -2,4 +2,4 @@
 Description="Service Monitor script"
 
 [Service]
-ExecStart=/usr/bin/timeout 2m /usr/bin/python3 /home/pi/espRelease/monitor.py
+ExecStart=/usr/bin/timeout 5m /usr/bin/python3 /home/pi/espRelease/monitor.py

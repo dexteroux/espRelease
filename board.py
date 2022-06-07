@@ -30,18 +30,20 @@ def handler(signum, frame):
 localDbUrl = "mysql+mysqlconnector://RnDuo:barc@10.128.1.100:3306/rnduo"
 
 class Commands(IntEnum):
-	NoCmd = 0
-	SetConfig = 1
-	GetConfig = 2
-	ReadRecord = 3
-	ReadRecords = 4
-	ReadAck = 5
-	Sleep = 6
-	SetTime = 7
-	GetTime = 8
-	SetCurrentRecordPtr = 9
-	GetCurrentRecordPtr = 10
-	ScheduleShutDown = 11
+    NoCmd = 0
+    SetConfig = 1
+    GetConfig = 2
+    ReadRecord = 3
+    ReadRecords = 4
+    ReadAck = 5
+    Sleep = 6
+    SetTime = 7
+    GetTime = 8
+    SetCurrentRecordPtr = 9
+    GetCurrentRecordPtr = 10
+    ScheduleShutDown = 11
+    InitPartitions = 12
+    PartitionsStatus = 13
 
 def resetBoard():
     print("Reseting Board ...")
@@ -52,7 +54,7 @@ def resetBoard():
     GPIO.output(esp_boot, 1)
     time.sleep(10)
     GPIO.cleanup()
-    
+
 def synctime():
     print("attempting time syncronisation ...")
     signal.signal(signal.SIGALRM, handler)
@@ -98,14 +100,16 @@ def getConfig():
     getConfig = {'cmd': Commands.GetConfig}
     ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(getConfig) + "'''").encode('utf-8'))
-    config = json.loads(ser.readline())
+    jstr = ser.readline()
+    print(jstr)
+    config = json.loads(jstr)
     ser.close()
     return config['config']
-    
+
 def setConfig(config):
     print("pushing configuration ...")
     setConfig = {'cmd': Commands.SetConfig,
-				'config': config}
+            'config': config}
     print(json.dumps(setConfig))
     ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(setConfig) + "'''").encode('utf-8'))
@@ -114,15 +118,37 @@ def setConfig(config):
     ser.close()
     return res['status']
 
-    
+
+def formatPartitions():
+    print("formating Partitions ...")
+    setConfig = {'cmd': Commands.InitPartitions}
+    print(json.dumps(setConfig))
+    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser.write(("'''" + json.dumps(setConfig) + "'''").encode('utf-8'))
+    res = json.loads(ser.readline())
+    print(res)
+    ser.close()
+    return res['status']
+
+def partitionStatus():
+    pstatus = {'cmd': Commands.PartitionsStatus}
+    print(json.dumps(pstatus))
+    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser.write(("'''" + json.dumps(pstatus) + "'''").encode('utf-8'))
+    res = json.loads(ser.readline())
+    print(res)
+    ser.close()
+    return res['PartitionsStatus']
+
 def readRecord(recordPointer):
     print("fetching Record ...")
     readRecordStr = {'cmd': Commands.ReadRecord, 'recordPointer': recordPointer}
     #print(json.dumps(readRecordStr))
     ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(readRecordStr) + "'''").encode('utf-8'))
-    #print(recordPointer, ser.readline())
-    res = json.loads(ser.readline())
+    jstr = ser.readline()
+    print(jstr)
+    res = json.loads(jstr)
     ser.close()
     return res['record']
 
@@ -156,6 +182,8 @@ def syncConfig(dbConfig, config):
     config["ADC2"]     = dbConfig['ADC2']
     config["ADC3"]     = dbConfig['ADC3']
     config["totalRecords"]     = dbConfig['RecordQueueSize']
+    print("$$$$$$$$$$$$$$$$$$$$$")
+    print(config)
     setConfig(config)
     return 0
 
@@ -181,25 +209,25 @@ if __name__ == '__main__':
             print(i)
             res = readRecord(i)
             data = {
-                "Pointer"      : i,
-                "SlNo"         : 0,
-                "SerialNo"     : config['serialNo'],
-                "devMode"      : config['mode'],
-                "devCycle"     : config['cycle'],
-                "Datetime"     : datetime.fromtimestamp(res['timestamp']), #"2021-10-12T13:27:52",
-                "Counts"       : res['Counts'],
-                "BGCounts"     : res['BGCounts'],
-                "Concentration": res['Concentration'],
-                "Sigma"        : res['Sigma'],
-                "Temperature"  : res['temperature'],
-                "Humidity"     : res['humidity'],
-                "LoadCurrent"  : res['loadCurrent'],
-                "InputVoltage" : res['inputVoltage'],
-                "BattVoltage"  : res['battVoltage'],
-                "RadonVoltage" : res['radonVoltage'],
-                "PMTVoltage"   : res['PMTVoltage'],
-                "Pressure"     : res['pressure']
-            }
+                    "Pointer"      : i,
+                    "SlNo"         : 0,
+                    "SerialNo"     : config['serialNo'],
+                    "devMode"      : config['mode'],
+                    "devCycle"     : config['cycle'],
+                    "Datetime"     : datetime.fromtimestamp(res['timestamp']), #"2021-10-12T13:27:52",
+                    "Counts"       : res['Counts'],
+                    "BGCounts"     : res['BGCounts'],
+                    "Concentration": res['Concentration'],
+                    "Sigma"        : res['Sigma'],
+                    "Temperature"  : res['temperature'],
+                    "Humidity"     : res['humidity'],
+                    "LoadCurrent"  : res['loadCurrent'],
+                    "InputVoltage" : res['inputVoltage'],
+                    "BattVoltage"  : res['battVoltage'],
+                    "RadonVoltage" : res['radonVoltage'],
+                    "PMTVoltage"   : res['PMTVoltage'],
+                    "Pressure"     : res['pressure']
+                    }
             ddd.append(data)
             #db.rndata.insert(**data)
             #db.commit()
