@@ -113,7 +113,9 @@ def setConfig(config):
     print(json.dumps(setConfig))
     ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(setConfig) + "'''").encode('utf-8'))
-    res = json.loads(ser.readline())
+    data = ser.readline()
+    print(data)
+    res = json.loads(data)
     print(res)
     ser.close()
     return res['status']
@@ -147,6 +149,7 @@ def readRecord(recordPointer):
     ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(readRecordStr) + "'''").encode('utf-8'))
     jstr = ser.readline()
+    #jstr = ser.readline()
     print(jstr)
     res = json.loads(jstr)
     ser.close()
