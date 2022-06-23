@@ -34,8 +34,8 @@ else
 	sudo uhubctl -a off
 	sleep 10
 	sudo uhubctl -a on
-	#sleep 10
-	#sudo uhubctl -a off
+	sleep 10
+	sudo uhubctl -a off
 	echo "Resetting USB hub done"
 fi
 
