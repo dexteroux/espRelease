@@ -1,0 +1,6 @@
+[Unit]
+Description="Service Monitor script"
+
+[Service]
+ExecStart=/usr/bin/timeout 2m /etc/indra/resetModem.sh | ts 
+
