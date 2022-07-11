@@ -1,6 +1,7 @@
 sudo apt install modemmanager network-manager dnsutils ntpstat
 sudo apt purge openresolv dhcpcd5
 sudo mmcli --list-modems
+sudo cp ./NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
 #sudo nmcli connection add type gsm ifname '*' con-name 'jio' apn 'jionet' gsm.home-only no connection.autoconnect yes ipv6.route-metric 100 ipv4.route-metric 100
 sudo nmcli connection add type gsm ifname '*' con-name 'bsnl' apn 'bsnlstatic' gsm.home-only no connection.autoconnect yes ipv4.route-metric 100 
 #nmcli dev wifi connect kitaabikeeda_EXT password "anirudhkahaanhai"
