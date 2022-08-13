@@ -2,8 +2,8 @@
 Description=Run monitor every 1 min
 
 [Timer]
-OnBootSec=1min
-OnUnitActiveSec=60
+OnBootSec=5min
+OnUnitActiveSec=50
 
 [Install]
 WantedBy=timers.target
