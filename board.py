@@ -91,6 +91,19 @@ def synctime():
         else:
             print("board time is in sync")
     else:
+        getTime = {'cmd': Commands.GetTime}
+        ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
+        boardts = json.loads(ser.readline())['timeStamp']
+        ts = time.time()
+        print(boardts)
+        print(ts)
+        if (boardts - ts)**2 > 8:
+            res = os.popen('date +%s -s @{0}'.format(boardts)).readlines()#[0]#(-1)[0].strip()
+            print(res)
+            ts = time.time()
+            print(ts)
+            #date +%s -s @1371729865
+
         print("System time not syncronised!")
     ser.close()
     return 0
