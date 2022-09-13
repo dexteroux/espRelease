@@ -66,7 +66,9 @@ def synctime():
         try:
             getTime = {'cmd': Commands.GetTime}
             ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
-            boardts = json.loads(ser.readline())['timeStamp']
+            dbuff = ser.readline()
+            print(dbuff)
+            boardts = json.loads(dbuff)['timeStamp']
             ts = time.time()
         except Exception as e:
             #print(traceback.format_exc())
@@ -75,7 +77,9 @@ def synctime():
             ser.reset_input_buffer()
             getTime = {'cmd': Commands.GetTime}
             ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
-            boardts = json.loads(ser.readline())['timeStamp']
+            dbuff = ser.readline()
+            print(dbuff)
+            boardts = json.loads(dbuff)['timeStamp']
             ts = time.time()
             pass
         finally:
@@ -86,14 +90,18 @@ def synctime():
             print("time sync in progress ...")
             setTime = {'cmd': Commands.SetTime, 'timeStamp': time.time()}
             ser.write(("'''" + json.dumps(setTime) + "'''").encode('utf-8'))
-            if json.loads(ser.readline())['status'] == 1:
+            dbuff = ser.readline()
+            print(dbuff)
+            if json.loads(dbuff)['status'] == 1:
                 print("time sync done.")
         else:
             print("board time is in sync")
     else:
         getTime = {'cmd': Commands.GetTime}
         ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
-        boardts = json.loads(ser.readline())['timeStamp']
+        dbuff = ser.readline()
+        print(dbuff)
+        boardts = json.loads(dbuff)['timeStamp']
         ts = time.time()
         print(boardts)
         print(ts)
@@ -140,7 +148,9 @@ def formatPartitions():
     print(json.dumps(setConfig))
     ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(setConfig) + "'''").encode('utf-8'))
-    res = json.loads(ser.readline())
+    dbuff = ser.readline()
+    print(dbuff)
+    res = json.loads(dbuff)
     print(res)
     ser.close()
     return res['status']
@@ -150,7 +160,9 @@ def partitionStatus():
     print(json.dumps(pstatus))
     ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(pstatus) + "'''").encode('utf-8'))
-    res = json.loads(ser.readline())
+    dbuff = ser.readline()
+    print(dbuff)
+    res = json.loads(dbuff)
     print(res)
     ser.close()
     return res['PartitionsStatus']
@@ -173,7 +185,9 @@ def readRecordAck(startOfRecordPtr):
     acknowledge = {'cmd': Commands.ReadAck, 'startOfRecordPtr': startOfRecordPtr}
     ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(acknowledge) + "'''").encode('utf-8'))
-    res = json.loads(ser.readline())
+    dbuff = ser.readline()
+    print(dbuff)
+    res = json.loads(dbuff)
     ser.close()
     return res['status']
 
@@ -181,7 +195,9 @@ def scheduleShutDown():
     scheduleShutDown = {'cmd': Commands.ScheduleShutDown}
     ser = serial.Serial(SERIAL_PORT, 115200)
     ser.write(("'''" + json.dumps(scheduleShutDown) + "'''").encode('utf-8'))
-    res = json.loads(ser.readline())
+    dbuff = ser.readline()
+    print(dbuff)
+    res = json.loads(dbuff)
     ser.close()
     return res['status']
 

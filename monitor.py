@@ -20,6 +20,9 @@ def json_serial(obj):
         return obj.isoformat()
     raise TypeError ("Type %s not serializable" % type(obj))
 
+print("#########################################################################")
+print("### Monitor Log Started @ {0} ########".format(datetime.now()))
+print("#########################################################################")
 url = 'https://localhost/client'
 lastUpdate = None
 response = {'actionTaken' : 'None'}
