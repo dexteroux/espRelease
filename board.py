@@ -92,7 +92,7 @@ def synctime():
     except Exception as e:
         print(traceback.format_exc())
         print(e)
-        #resetBoard()
+        resetBoard()
         ser.reset_input_buffer()
         pass
     finally:
