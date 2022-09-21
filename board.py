@@ -61,59 +61,43 @@ def synctime():
     signal.alarm(10)
     ser = serial.Serial(SERIAL_PORT, 115200)
     res = os.popen('timedatectl status | grep synchronized').readlines()[0]#(-1)[0].strip()
-    if res != None and "yes" in res:
-        print("System time syncronised!")
-        try:
-            getTime = {'cmd': Commands.GetTime}
-            ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
-            dbuff = ser.readline()
-            print(dbuff)
-            boardts = json.loads(dbuff)['timeStamp']
-            ts = time.time()
-        except Exception as e:
-            #print(traceback.format_exc())
-            #print(e)
-            resetBoard()
-            ser.reset_input_buffer()
-            getTime = {'cmd': Commands.GetTime}
-            ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
-            dbuff = ser.readline()
-            print(dbuff)
-            boardts = json.loads(dbuff)['timeStamp']
-            ts = time.time()
-            pass
-        finally:
-            signal.alarm(0)
-        print(boardts, ts)
-        if (boardts - ts)**2 > 8:
-            print("time stamp doesn't match ", boardts - ts, "Sec ...")
-            print("time sync in progress ...")
-            setTime = {'cmd': Commands.SetTime, 'timeStamp': time.time()}
-            ser.write(("'''" + json.dumps(setTime) + "'''").encode('utf-8'))
-            dbuff = ser.readline()
-            print(dbuff)
-            if json.loads(dbuff)['status'] == 1:
-                print("time sync done.")
-        else:
-            print("board time is in sync")
-    else:
+    try:
         getTime = {'cmd': Commands.GetTime}
         ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
         dbuff = ser.readline()
         print(dbuff)
         boardts = json.loads(dbuff)['timeStamp']
         ts = time.time()
-        print(boardts)
-        print(ts)
-        if (boardts - ts)**2 > 8:
-            res = os.popen('date +%s -s @{0}'.format(boardts)).readlines()#[0]#(-1)[0].strip()
-            print(res)
-            ts = time.time()
-            print(ts)
-            #date +%s -s @1371729865
-
-        print("System time not syncronised!")
-    ser.close()
+        print(boardts, ts)
+        if res != None and "yes" in res:
+            print("System time syncronised!")
+            if (boardts - ts)**2 > 8:
+                print("time stamp doesn't match ", boardts - ts, "Sec ...")
+                print("time sync in progress ...")
+                setTime = {'cmd': Commands.SetTime, 'timeStamp': time.time()}
+                ser.write(("'''" + json.dumps(setTime) + "'''").encode('utf-8'))
+                dbuff = ser.readline()
+                print(dbuff)
+                if json.loads(dbuff)['status'] == 1:
+                    print("time sync done.")
+            else:
+                print("board time is in sync")
+        else:
+            if (boardts - ts)**2 > 8:
+                res = os.popen('date +%s -s @{0}'.format(boardts)).readlines()#[0]#(-1)[0].strip()
+                print(res)
+                ts = time.time()
+                print(ts)
+                #date +%s -s @1371729865
+    except Exception as e:
+        print(traceback.format_exc())
+        print(e)
+        #resetBoard()
+        ser.reset_input_buffer()
+        pass
+    finally:
+        signal.alarm(0)
+        ser.close()
     return 0
 
 def getConfig():

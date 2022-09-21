@@ -2,7 +2,7 @@
 Description=Run monitor every 1 min
 
 [Timer]
-OnBootSec=1min
+OnBootSec=10
 OnUnitActiveSec=60
 
 [Install]
