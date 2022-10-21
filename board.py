@@ -55,6 +55,17 @@ def resetBoard():
     time.sleep(10)
     GPIO.cleanup()
 
+def nocmd():
+    print("sending nocmd ...")
+    noCmd = {'cmd': Commands.NoCmd}
+    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser.write(("'''" + json.dumps(noCmd) + "'''").encode('utf-8'))
+    jstr = ser.readline()
+    print(jstr)
+    #config = json.loads(jstr)
+    ser.close()
+    return jstr
+
 def synctime():
     print("attempting time syncronisation ...")
     signal.signal(signal.SIGALRM, handler)
@@ -63,12 +74,20 @@ def synctime():
     res = os.popen('timedatectl status | grep synchronized').readlines()[0]#(-1)[0].strip()
     try:
         getTime = {'cmd': Commands.GetTime}
+        ts = time.time()
         ser.write(("'''" + json.dumps(getTime) + "'''").encode('utf-8'))
         dbuff = ser.readline()
         print(dbuff)
-        boardts = json.loads(dbuff)['timeStamp']
-        ts = time.time()
-        print(boardts, ts)
+        try:
+            boardts = json.loads(dbuff)['timeStamp']
+            print(boardts, ts)
+        except (UnicodeDecodeError,  json.decoder.JSONDecodeError) as e:
+            print("#######################Decode ERROR ####################")
+            print(traceback.format_exc())
+            print(e)
+            boardts = ts
+            signal.alarm(20)
+            time.sleep(10)
         if res != None and "yes" in res:
             print("System time syncronised!")
             if (boardts - ts)**2 > 8:
@@ -90,10 +109,12 @@ def synctime():
                 print(ts)
                 #date +%s -s @1371729865
     except Exception as e:
+        print("####################### Timeout ERROR ####################")
         print(traceback.format_exc())
         print(e)
         resetBoard()
         ser.reset_input_buffer()
+        time.sleep(10)
         pass
     finally:
         signal.alarm(0)

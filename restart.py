@@ -19,13 +19,9 @@ cmd = ['cat', '/proc/uptime']
 uptime = float(subprocess.check_output(cmd).decode("utf-8").split(' ')[0])
 upTimeInMin = uptime / 60
 print(upTimeInMin)
-if upTimeInMin > 100:
-    print('Rebooting ...')
-    os.system("systemctl stop monitor.timer")
-    os.system("systemctl stop monitor")
-    board.synctime()
-    board.scheduleShutDown()
-    os.system("reboot")
+if upTimeInMin > 150:
+    print('Resetting ...')
+    os.system("systemctl restart monitor.timer")
 else:
-    print('Not Rebooting yet ...')
+    print('Not Resetting yet ...')
 

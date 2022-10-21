@@ -20,6 +20,7 @@ def json_serial(obj):
         return obj.isoformat()
     raise TypeError ("Type %s not serializable" % type(obj))
 
+
 print("#########################################################################")
 print("### Monitor Log Started @ {0} ########".format(datetime.now()))
 print("#########################################################################")
@@ -32,6 +33,14 @@ print(ip)
 uptime = float(subprocess.check_output(cmd).decode("utf-8").split(' ')[0])
 upTimeInMin = uptime / 60
 print(upTimeInMin)
+
+if upTimeInMin > 100:
+    print('Rebooting ...')
+    os.system("reboot")
+    exit()
+else:
+    print('Not Rebooting yet ...')
+
 ddd = []
 response['upTimeInMin'] = upTimeInMin
 try:
@@ -43,6 +52,7 @@ except Exception as e:
     print("####################")
 print(dbConfig)
 if (dbConfig):
+    board.nocmd()
     board.synctime()
     #exit(0)
     config = board.getConfig()
@@ -145,13 +155,4 @@ if response['actionTaken'] == 'Rebooting':
     #os.system("reboot")
     pass
 
-'''lastUpdate = res['lastupdated']
-    if (lastUpdate):
-        updatedAt = datetime.strptime(lastUpdate, '%Y-%m-%d %H:%M:%S')
-        diff = datetime.now() - updatedAt
-        print(diff.total_seconds()/60)
-        if diff.total_seconds()/60 > 15: #15:
-        returned_value = subprocess.call('systemctl restart web2pyClientSched.service', shell=True)
-        print('returned value:', returned_value)
-    pass'''
 pass

@@ -3,5 +3,5 @@ Description="Service Monitor script"
 
 [Service]
 ExecStart=/usr/bin/timeout 5m /usr/bin/python3 /home/pi/espRelease/monitor.py 
-StandardOutput=append:/var/log/monitor/output.log
-StandardError=append:/var/log/monitor/error.log
+StandardOutput=append:/home/pi/log/monitor/output.log
+StandardError=append:/home/pi/log/monitor/error.log
