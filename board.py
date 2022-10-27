@@ -15,7 +15,7 @@ import signal
 import traceback
 
 SERIAL_PORT = "/dev/ttyS0"
-
+BAUDRATE = 9600
 esp_en = 17
 esp_boot = 27
 
@@ -58,7 +58,7 @@ def resetBoard():
 def nocmd():
     print("sending nocmd ...")
     noCmd = {'cmd': Commands.NoCmd}
-    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE)# 115200115200)
     ser.write(("'''" + json.dumps(noCmd) + "'''").encode('utf-8'))
     jstr = ser.readline()
     print(jstr)
@@ -70,7 +70,7 @@ def synctime():
     print("attempting time syncronisation ...")
     signal.signal(signal.SIGALRM, handler)
     signal.alarm(10)
-    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE)# 115200115200)
     res = os.popen('timedatectl status | grep synchronized').readlines()[0]#(-1)[0].strip()
     try:
         getTime = {'cmd': Commands.GetTime}
@@ -124,7 +124,7 @@ def synctime():
 def getConfig():
     print("fetching configuration ...")
     getConfig = {'cmd': Commands.GetConfig}
-    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE)# 115200115200)
     ser.write(("'''" + json.dumps(getConfig) + "'''").encode('utf-8'))
     jstr = ser.readline()
     print(jstr)
@@ -137,7 +137,7 @@ def setConfig(config):
     setConfig = {'cmd': Commands.SetConfig,
             'config': config}
     print(json.dumps(setConfig))
-    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE)# 115200115200)
     ser.write(("'''" + json.dumps(setConfig) + "'''").encode('utf-8'))
     data = ser.readline()
     print(data)
@@ -151,7 +151,7 @@ def formatPartitions():
     print("formating Partitions ...")
     setConfig = {'cmd': Commands.InitPartitions}
     print(json.dumps(setConfig))
-    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE)# 115200115200)
     ser.write(("'''" + json.dumps(setConfig) + "'''").encode('utf-8'))
     dbuff = ser.readline()
     print(dbuff)
@@ -163,7 +163,7 @@ def formatPartitions():
 def partitionStatus():
     pstatus = {'cmd': Commands.PartitionsStatus}
     print(json.dumps(pstatus))
-    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE)# 115200115200)
     ser.write(("'''" + json.dumps(pstatus) + "'''").encode('utf-8'))
     dbuff = ser.readline()
     print(dbuff)
@@ -176,7 +176,7 @@ def readRecord(recordPointer):
     print("fetching Record ...")
     readRecordStr = {'cmd': Commands.ReadRecord, 'recordPointer': recordPointer}
     #print(json.dumps(readRecordStr))
-    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE)# 115200115200)
     ser.write(("'''" + json.dumps(readRecordStr) + "'''").encode('utf-8'))
     jstr = ser.readline()
     #jstr = ser.readline()
@@ -188,7 +188,7 @@ def readRecord(recordPointer):
 
 def readRecordAck(startOfRecordPtr):
     acknowledge = {'cmd': Commands.ReadAck, 'startOfRecordPtr': startOfRecordPtr}
-    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE)# 115200115200)
     ser.write(("'''" + json.dumps(acknowledge) + "'''").encode('utf-8'))
     dbuff = ser.readline()
     print(dbuff)
@@ -198,7 +198,7 @@ def readRecordAck(startOfRecordPtr):
 
 def scheduleShutDown():
     scheduleShutDown = {'cmd': Commands.ScheduleShutDown}
-    ser = serial.Serial(SERIAL_PORT, 115200)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE)# 115200)
     ser.write(("'''" + json.dumps(scheduleShutDown) + "'''").encode('utf-8'))
     dbuff = ser.readline()
     print(dbuff)
