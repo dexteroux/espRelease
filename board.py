@@ -15,7 +15,7 @@ import signal
 import traceback
 
 SERIAL_PORT = "/dev/ttyS0"
-BAUDRATE = 9600
+BAUDRATE = 115200 # 9600
 esp_en = 17
 esp_boot = 27
 
